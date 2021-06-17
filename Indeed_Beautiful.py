@@ -5,14 +5,15 @@ from random import randint
 from time import sleep
 import re
 
-
 FIRST_ELEMENT = 0
 BASE_JOB_POST_URL = "https://www.indeed.com/viewjob?jk="
+
 
 def make_a_request(link):
     """returns the content of a website using the link of the website"""
     source = requests.get(link)
     return source
+
 
 def extract_jobkeys(content):
     """extract the IDs of the job offers on Indeed website"""
@@ -154,6 +155,48 @@ def extract_number_of_ratings(soup):
         return number_of_ratings.get("content")
 
 
+def get_number_of_days(string):
+    """
+
+    :param string:
+    :return:
+    """
+    if "Just posted" in string:
+        return 0
+    elif "Today" in string:
+        return 0
+    elif "ago" in string:
+        days = re.findall(r'[0-9]+', string)
+        return int(days[0])
+    else:
+        return None
+
+
+def posting_date_calculator(days_to_subtract):
+    """
+    Given a number of days to substract, this function subtract them to current
+    date. The target is to be able to calculate posting date of job post.
+
+    :param days_to_subtract: an integer
+    :return: a date
+    """
+    now = datetime.now()
+    posting_date = now - timedelta(days=days_to_subtract)
+    return posting_date
+
+
+def extract_job_posting_date(soup):
+    """
+    This function returns job posting date from given soup
+
+    :param soup: soup (BS4 Object)
+    :return: a string, job posting date
+    """
+    job_posting_date = soup.find(class_="jobsearch-JobMetadataFooter")
+    number_of_days = get_number_of_days(job_posting_date.text)
+    posting_date = posting_date_calculator(number_of_days).date()
+    return posting_date
+
 
 def get_job_informations(job_post_id):
     """
@@ -180,55 +223,17 @@ def get_job_informations(job_post_id):
     return job_informations
 
 
-def get_number_of_days(string):
-    """
-
-    :param string:
-    :return:
-    """
-    if "Just posted" in string:
-        return 0
-    elif "Today" in string:
-        return 0
-    elif "ago" in string:
-        days = re.findall(r'[0-9]+', string)
-        return int(days[0])
-    else:
-        return None
-
-def posting_date_calculator(days_to_subtract):
-    """
-    Given a number of days to substract, this function subtract them to current
-    date. The target is to be able to calculate posting date of job post.
-
-    :param days_to_subtract: an integer
-    :return: a date
-    """
-    now = datetime.now()
-    posting_date = now - timedelta(days=days_to_subtract)
-    return posting_date
-
-def extract_job_posting_date(soup):
-    """
-    This function returns job posting date from given soup
-
-    :param soup: soup (BS4 Object)
-    :return: a string, job posting date
-    """
-    job_posting_date = soup.find(class_="jobsearch-JobMetadataFooter")
-    number_of_days = get_number_of_days(job_posting_date.text)
-    posting_date = posting_date_calculator(number_of_days).date()
-    return posting_date
-
 def main(number_of_pages):
     """print the job Ids for a given number of pages in Indeed"""
     for i in range(number_of_pages):
-        link = "https://www.indeed.com/jobs?q=data+science&l=United+States&sort=date" + "&start=" + 10 * str(i)
+        link = "https://www.indeed.com/jobs?q=data+science&l=United+States&sort=date" + "&start=" + 10 * str(
+            i)
         content = make_a_request(link).text
         content_list = extract_jobkeys(content)
         for id_post in content_list:
             print(get_job_informations(id_post))
             sleep(randint(1, 10))
+
 
 if __name__ == '__main__':
     main(1)
