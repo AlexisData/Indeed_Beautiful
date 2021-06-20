@@ -25,6 +25,19 @@ def extract_jobkeys(content):
     return final_list
 
 
+def args(Keyword = "data+science", Where = "United+States", Number_of_pages = 4):
+    """Given a keyword, a place (Where) and a number of pages to scrap: returns a link.
+    :param Keyword: str,
+           Where: str,
+           Number_of_pages: Int
+    :return: a link: str"""
+    Keyword.replace(" ", "+")
+    Where.replace(" ", "+")
+    for i in range(0, Number_of_pages):
+        link = "https://www.indeed.com/jobs?q=" + Keyword + "&l=" + Where + "&sort=date" + "&start=" + 10 * str(i)
+        print(link)
+
+        
 def get_soup(job_post_id):
     """
     Given a job_post_id, this function returns the HTML content
