@@ -4,9 +4,58 @@ from datetime import datetime, timedelta
 from random import randint
 from time import sleep
 import re
+import argparse
 
 FIRST_ELEMENT = 0
 BASE_JOB_POST_URL = "https://www.indeed.com/viewjob?jk="
+NUMBER_OF_LINK = 15
+
+
+def get_user_informations():
+    """
+    This function get parameters givens by user in CLI.
+
+    :return: values given, in dictionary
+    """
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('keyword', help='keyword of the job you are '
+                                        'looking for', type=str,
+                        default="Data Science", nargs="?")
+    parser.add_argument('place', help='where do you want to work', type=str,
+                        default="United States", nargs="?")
+    parser.add_argument("number_of_pages", help="number of pages to scrape",
+                        default=4, type=int, nargs="?")
+
+    args = parser.parse_args()
+    args_dict = vars(args)
+
+    return args_dict
+
+
+def parse_user_informations(args_dict):
+    """
+    Create link to request from values in dictionary
+
+    :param args_dict: a dict
+    :return: a list of links
+    """
+    keyword = args_dict["keyword"]
+    place = args_dict["place"]
+    number_of_pages = args_dict["number_of_pages"]
+
+    keyword.replace(" ", "+")
+    place.replace(" ", "+")
+
+    links = []
+
+    for i in range(number_of_pages):
+        link = "https://www.indeed.com/jobs?q=" + keyword + "&l=" + place \
+               + "&sort=date" + "&start=" + str(10 * int(i))
+        links.append(link)
+
+    return links
 
 
 def make_a_request(link):
@@ -18,26 +67,12 @@ def make_a_request(link):
 def extract_jobkeys(content):
     """extract the IDs of the job offers on Indeed website"""
     solution = re.findall("jobKeysWithInfo.*?true;", content)
-    final_list = []
-    NUMBER_OF_LINK = 15
+    jobs_key_list = []
     for i in range(NUMBER_OF_LINK):
-        final_list.append(solution[i][17:-10])
-    return final_list
+        jobs_key_list.append(solution[i][17:-10])
+    return jobs_key_list
 
 
-def args(Keyword = "data+science", Where = "United+States", Number_of_pages = 4):
-    """Given a keyword, a place (Where) and a number of pages to scrap: returns a link.
-    :param Keyword: str,
-           Where: str,
-           Number_of_pages: Int
-    :return: a link: str"""
-    Keyword.replace(" ", "+")
-    Where.replace(" ", "+")
-    for i in range(0, Number_of_pages):
-        link = "https://www.indeed.com/jobs?q=" + Keyword + "&l=" + Where + "&sort=date" + "&start=" + 10 * str(i)
-        print(link)
-
-        
 def get_soup(job_post_id):
     """
     Given a job_post_id, this function returns the HTML content
@@ -170,9 +205,10 @@ def extract_number_of_ratings(soup):
 
 def get_number_of_days(string):
     """
+    Given a string, deduct the number of days to extract from it
 
-    :param string:
-    :return:
+    :param string: a string
+    :return: int, number of days
     """
     if "Just posted" in string:
         return 0
@@ -236,17 +272,21 @@ def get_job_informations(job_post_id):
     return job_informations
 
 
-def main(number_of_pages):
-    """print the job Ids for a given number of pages in Indeed"""
-    for i in range(number_of_pages):
-        link = "https://www.indeed.com/jobs?q=data+science&l=United+States&sort=date" + "&start=" + 10 * str(
-            i)
-        content = make_a_request(link).text
-        content_list = extract_jobkeys(content)
-        for id_post in content_list:
-            print(get_job_informations(id_post))
-            sleep(randint(1, 10))
+def main():
 
+    args_dict = get_user_informations()
+    results_page_links = parse_user_informations(args_dict)
+
+    for link in results_page_links:
+        content = make_a_request(link)
+        jobs_id_list = extract_jobkeys(content)
+        print(jobs_id_list)
+        """
+
+        for job_id in jobs_id_list:
+            print(get_job_informations(job_id))
+            sleep(randint(1, 10))
+        """
 
 if __name__ == '__main__':
-    main(1)
+    main()
