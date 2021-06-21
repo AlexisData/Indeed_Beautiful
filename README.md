@@ -34,8 +34,8 @@ job_id, company_name, company_location, contract_type, company_rating_score,
 number_of_ratings, job_posting_date, job_description, candidate_link,
 salary.
 
-All this information are inserted into a dictionary 
-(in preparation for import into the database - see Roadmap)
+All this information is inserted into a dictionary 
+(in preparation for its importation into the database - see Roadmap)
 
   
 ## Tech Stack
@@ -45,10 +45,9 @@ Full Python !
   
 ## Roadmap
 
-In the future, this script will be improved, in particular with :
+In the future, this script will be improved, by :
 - importing and storing the retrieved data in a database;
-- automation of the script execution
-
+- automating the execution of the script
   
 ## Authors
 
