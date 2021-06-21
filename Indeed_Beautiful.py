@@ -22,15 +22,14 @@ def get_user_informations():
 
     parser.add_argument('keyword', help='keyword of the job you are '
                                         'looking for', type=str,
-                        default="Data Science", nargs="?")
+                        default="Data+Science", nargs="?")
     parser.add_argument('place', help='where do you want to work', type=str,
-                        default="United States", nargs="?")
+                        default="United+States", nargs="?")
     parser.add_argument("number_of_pages", help="number of pages to scrape",
                         default=4, type=int, nargs="?")
-    try:
-        args = parser.parse_args()
-    except:
-        raise ValueError("now")
+
+    args = parser.parse_args()
+
     print(args)
     args_dict = vars(args)
 
