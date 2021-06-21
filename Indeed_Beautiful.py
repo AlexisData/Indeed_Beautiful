@@ -73,7 +73,7 @@ def extract_jobkeys(content):
     return jobs_key_list
 
 
-def get_soup(job_post_id):
+def get_soup_job(job_post_id):
     """
     Given a job_post_id, this function returns the HTML content
     for a specific job page.
@@ -255,7 +255,7 @@ def get_job_informations(job_post_id):
     :param job_post_id: a string, id of job post
     :return: a dictionary, with job post informations
     """
-    soup = get_soup(job_post_id)
+    soup = get_soup_job(job_post_id)
     job_informations = {
         "id_post": job_post_id,
         "company_name": extract_company_name(soup),
