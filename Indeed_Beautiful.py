@@ -27,11 +27,10 @@ def get_user_informations():
                         default="United States", nargs="?")
     parser.add_argument("number_of_pages", help="number of pages to scrape",
                         default=4, type=int, nargs="?")
-    try:
+     try:
         args = parser.parse_args()
-    except:
-        raise ValueError("now")
-    print(args)
+    except :
+        raise ValueError("Your input must be of the form: keyword(string) place(string) number_of_pages(integer) with spaces replaced by +")
     args_dict = vars(args)
 
     return args_dict
