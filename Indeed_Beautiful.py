@@ -30,7 +30,7 @@ def get_user_informations():
      try:
         args = parser.parse_args()
     except :
-        raise ValueError("Your input must be of the form: keyword(string) place(string) number_of_pages(integer) with spaces replaced by +")
+        raise ValueError("Your input must be of the form: keyword(string) place(string) number_of_pages(integer) with spaces inside an argument replaced by + (Ex: New+York)")
     args_dict = vars(args)
 
     return args_dict
