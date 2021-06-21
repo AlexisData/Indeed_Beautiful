@@ -62,13 +62,24 @@ def parse_user_informations(args_dict):
 
 
 def make_a_request(link):
-    """returns the content of a website using the link of the website"""
+    """
+    Returns the content of a website using the link of the website
+
+    :param link: a str, link
+    :return: response object, with website informations
+    """
     source = requests.get(link)
     return source
 
 
 def extract_jobkeys(content):
-    """extract the IDs of the job offers on Indeed website"""
+    """
+    Extract the IDs of the job offers on Indeed website
+
+    :param content: response object from request
+    :return: a list of jobkeys
+    """
+
     solution = re.findall("jobKeysWithInfo.*?true;", content)
     jobs_key_list = []
     for i in range(NUMBER_OF_LINK):
@@ -278,12 +289,10 @@ def get_job_informations(job_post_id):
 def main():
     args_dict = get_user_informations()
     results_page_links = parse_user_informations(args_dict)
-    print(results_page_links)
 
     for link in results_page_links:
         content = make_a_request(link)
         jobs_id_list = extract_jobkeys(content.text)
-        print(jobs_id_list)
 
         for job_id in jobs_id_list:
             print(get_job_informations(job_id))
