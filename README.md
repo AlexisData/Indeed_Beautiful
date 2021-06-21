@@ -10,7 +10,7 @@ information associated with job offers posted on the Indeed.com
 website: company, position, salary, description...
 ## Installation 
 
-First, install the packages from requirement.txt
+First, install the packages from requirements.txt
     
 ## Usage/Examples
 
