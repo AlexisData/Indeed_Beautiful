@@ -27,8 +27,11 @@ def get_user_informations():
                         default="United States", nargs="?")
     parser.add_argument("number_of_pages", help="number of pages to scrape",
                         default=4, type=int, nargs="?")
-
-    args = parser.parse_args()
+    try:
+        args = parser.parse_args()
+    except:
+        raise ValueError("now")
+    print(args)
     args_dict = vars(args)
 
     return args_dict
@@ -44,9 +47,6 @@ def parse_user_informations(args_dict):
     keyword = args_dict["keyword"]
     place = args_dict["place"]
     number_of_pages = args_dict["number_of_pages"]
-
-    keyword.replace(" ", "+")
-    place.replace(" ", "+")
 
     links = []
 
@@ -69,7 +69,7 @@ def extract_jobkeys(content):
     solution = re.findall("jobKeysWithInfo.*?true;", content)
     jobs_key_list = []
     for i in range(NUMBER_OF_LINK):
-        jobs_key_list.append(solution[i][17:-10])
+        jobs_key_list.append(solution[i][17:-10]) # Keep in constant if REGEX
     return jobs_key_list
 
 
@@ -276,17 +276,18 @@ def main():
 
     args_dict = get_user_informations()
     results_page_links = parse_user_informations(args_dict)
+    print (results_page_links)
+
+    raise ValueError
 
     for link in results_page_links:
         content = make_a_request(link)
-        jobs_id_list = extract_jobkeys(content)
+        jobs_id_list = extract_jobkeys(content.text)
         print(jobs_id_list)
-        """
 
         for job_id in jobs_id_list:
             print(get_job_informations(job_id))
             sleep(randint(1, 10))
-        """
 
 if __name__ == '__main__':
     main()
