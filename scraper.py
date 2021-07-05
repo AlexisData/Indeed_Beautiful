@@ -10,7 +10,7 @@ NUMBER_OF_LINK = 15
 
 class ResultPageScraper:
     """
-
+    Result Page scraper
     """
 
     def __init__(self, link):
@@ -22,7 +22,6 @@ class ResultPageScraper:
         """
         Extract the IDs of the job offers on Indeed website
 
-        :param content: response object from request
         :return: a list of jobkeys
         """
 
@@ -40,6 +39,9 @@ class ResultPageScraper:
 
 
 class JobPageScraper:
+    """
+    Job page Scraper
+    """
 
     def __init__(self, job_post_id):
         self.job_post_id = job_post_id
@@ -49,7 +51,6 @@ class JobPageScraper:
         Given a job_post_id, this function returns the HTML content
         for a specific job page.
 
-        :param job_post_id: str
         :return: soup (BS4 object)
         """
         job_post_url = BASE_JOB_POST_URL + str(self.job_post_id)
@@ -61,7 +62,6 @@ class JobPageScraper:
         """
         This function extract job title from given soup.
 
-        :param soup: soup (BS4 object)
         :return: a string, job_title
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -73,7 +73,6 @@ class JobPageScraper:
         """
         This function extract company name from given soup.
 
-        :param soup: soup (BS4 object)
         :return: a string, company name
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -85,7 +84,6 @@ class JobPageScraper:
         """
         This function extract company location from given soup.
 
-        :param soup: soup (BS4 object)
         :return: a string, company location
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -99,7 +97,6 @@ class JobPageScraper:
         """
         This function extract job type from given soup.
 
-        :param soup: soup (BS4 Object)
         :return: a string, job type
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -117,7 +114,6 @@ class JobPageScraper:
         """
         this function returns job description from given soup
 
-        :param soup: soup (BS4 Object)
         :return: a string, job description
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -129,7 +125,6 @@ class JobPageScraper:
         """
         This function returns link to candidate from given soup.
 
-        :param soup: soup (BS4 Object)
         :return: a string, url link
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -143,7 +138,6 @@ class JobPageScraper:
         """
         This function returns salary from given soup.
 
-        :param soup: soup (BS4 object)
         :return: a string, salary
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -159,7 +153,6 @@ class JobPageScraper:
         """
         This function returns company rating score from given soup.
 
-        :param soup: soup (BS4 object)
         :return: a string, company rating score /5
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -172,7 +165,6 @@ class JobPageScraper:
         """
         This function returns company number of ratings from given soup.
 
-        :param soup: soup (BS4 object)
         :return: a string, count of votes
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -181,7 +173,7 @@ class JobPageScraper:
         if number_of_ratings:
             return number_of_ratings.get("content")
 
-    def get_number_of_days(string):
+    def get_number_of_days(self, string):
         """
         Given a string, deduct the number of days to extract from it
 
@@ -198,7 +190,7 @@ class JobPageScraper:
         else:
             return None
 
-    def posting_date_calculator(days_to_subtract):
+    def posting_date_calculator(self, days_to_subtract):
         """
         Given a number of days to substract, this function subtract them to current
         date. The target is to be able to calculate posting date of job post.
@@ -214,7 +206,6 @@ class JobPageScraper:
         """
         This function returns job posting date from given soup
 
-        :param soup: soup (BS4 Object)
         :return: a string, job posting date
         """
         soup = JobPageScraper.get_soup_job(self)
@@ -230,7 +221,6 @@ class JobPageScraper:
         Given a job id from Indeed, this function returns informations about
         job post : company name, company location etc. in a dictionary.
 
-        :param job_post_id: a string, id of job post
         :return: a dictionary, with job post informations
         """
         job_informations = {
