@@ -29,12 +29,19 @@ rating_count = dic['number_of_ratings']
 localisation = dic['company_location']
 job_description = dic['job_description']
 
-mycursor.execute('INSERT INTO jobs (job_indeed_id, contract_type, job_posting_date, candidate_link, salary) values (job_indeed_id, contract_type, job_posting_date, candidate_link, salary);')
+mycursor.execute('INSERT INTO jobs (job_indeed_id, contract_type, job_posting_date, candidate_link, salary) values (%s, %s, %s, %s, %s)', (job_indeed_id, contract_type, job_posting_date, candidate_link, salary))
 
-mycursor.execute('INSERT INTO companies (name, rating_score, rating_count) values (name, rating_score, rating_count);')
+mycursor.execute('INSERT INTO companies (name, rating_score, rating_count) values (%s,%s,%s)', (name, rating_score, rating_count))
 
-mycursor.execute('INSERT INTO localisation (localisation) values (localisation);')
+mycursor.execute("INSERT INTO localisation (localisation) values (%s)", (localisation,))
 
-mycursor.execute('INSERT INTO jobs_description (job_description) values (job_description);')
+mycursor.execute("INSERT INTO jobs_description (job_description) values (%s)", (job_description,))
+
+db.commit()
 
 print("Table jobs created")
+
+mycursor.execute("SELECT * FROM jobs_description")
+record = mycursor.fetchall()
+for r in record:
+    print(r)
