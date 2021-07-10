@@ -66,8 +66,9 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        job_title = soup.h1.text
-        return job_title
+        if soup:
+            job_title = soup.h1.text
+            return job_title
 
     def extract_company_name(self):
         """
@@ -77,8 +78,10 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        company_name = soup.find(class_="icl-u-lg-mr--sm icl-u-xs-mr--xs").text
-        return company_name
+        if soup:
+            company_name = soup.find(
+                class_="icl-u-lg-mr--sm icl-u-xs-mr--xs").text
+            return company_name
 
     def extract_company_location(self):
         """
@@ -88,10 +91,11 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        company_location = soup.find(
-            class_="jobsearch-InlineCompanyRating icl-u-xs-mt--xs "
-                   "jobsearch-DesktopStickyContainer-companyrating").next_sibling.text
-        return company_location
+        if soup:
+            company_location = soup.find(
+                class_="jobsearch-InlineCompanyRating icl-u-xs-mt--xs "
+                       "jobsearch-DesktopStickyContainer-companyrating").next_sibling.text
+            return company_location
 
     def extract_contract_type(self):
         """
@@ -101,14 +105,15 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        contract_type = soup.find_all(
-            class_="jobsearch-JobDescriptionSection-sectionItem")
+        if soup:
+            contract_type = soup.find_all(
+                class_="jobsearch-JobDescriptionSection-sectionItem")
 
-        for div in contract_type:
-            if str(div.text).startswith("Job Type"):
-                contract_type = (str(div.text)[
-                                 8:])
-                return contract_type  # 8 to remove "Job Type" from beginning of the string
+            for div in contract_type:
+                if str(div.text).startswith("Job Type"):
+                    contract_type = (str(div.text)[
+                                     8:])
+                    return contract_type  # 8 to remove "Job Type" from beginning of the string
 
     def extract_job_description(self):
         """
@@ -118,8 +123,9 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        job_description = soup.find(id="jobDescriptionText").text
-        return job_description
+        if soup:
+            job_description = soup.find(id="jobDescriptionText").text
+            return job_description
 
     def extract_candidate_link(self):
         """
@@ -129,10 +135,11 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        candidate_link = soup.find(
-            class_="icl-Button icl-Button--primary icl-Button--md icl-Button--block")
-        if candidate_link:
-            return candidate_link["href"]
+        if soup:
+            candidate_link = soup.find(
+                class_="icl-Button icl-Button--primary icl-Button--md icl-Button--block")
+            if candidate_link:
+                return candidate_link["href"]
 
     def extract_salary(self):
         """
@@ -142,12 +149,13 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        salary = soup.find_all(
-            class_="jobsearch-JobDescriptionSection-sectionItem")
-        for div in salary:
-            if str(div.text).startswith("Salary"):
-                return (str(div.text)[
-                        6:])  # 6 to remove "Salary" from beginning of the string
+        if soup:
+            salary = soup.find_all(
+                class_="jobsearch-JobDescriptionSection-sectionItem")
+            for div in salary:
+                if str(div.text).startswith("Salary"):
+                    return (str(div.text)[
+                            6:])  # 6 to remove "Salary" from beginning of the string
 
     def extract_company_rating_score(self):
         """
@@ -157,9 +165,10 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        company_rating_score = soup.find(itemprop="ratingValue")
-        if company_rating_score:
-            return company_rating_score["content"]
+        if soup:
+            company_rating_score = soup.find(itemprop="ratingValue")
+            if company_rating_score:
+                return company_rating_score["content"]
 
     def extract_number_of_ratings(self):
         """
@@ -169,9 +178,10 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
 
-        number_of_ratings = soup.find(itemprop="ratingCount")
-        if number_of_ratings:
-            return number_of_ratings.get("content")
+        if soup:
+            number_of_ratings = soup.find(itemprop="ratingCount")
+            if number_of_ratings:
+                return number_of_ratings.get("content")
 
     def get_number_of_days(self, string):
         """
@@ -209,12 +219,13 @@ class JobPageScraper:
         :return: a string, job posting date
         """
         soup = JobPageScraper.get_soup_job(self)
-        job_posting_date = soup.find(class_="jobsearch-JobMetadataFooter")
-        number_of_days = JobPageScraper.get_number_of_days(
-            job_posting_date.text)
-        posting_date = JobPageScraper.posting_date_calculator(
-            number_of_days).date()
-        return posting_date
+        if soup:
+            job_posting_date = soup.find(class_="jobsearch-JobMetadataFooter")
+            number_of_days = JobPageScraper.get_number_of_days(self,
+                                                               job_posting_date.text)
+            posting_date = JobPageScraper.posting_date_calculator(self,
+                                                                  number_of_days).date()
+            return posting_date
 
     def get_job_informations(self):
         """
@@ -223,7 +234,7 @@ class JobPageScraper:
 
         :return: a dictionary, with job post informations
         """
-        job_informations = {
+        self.job_informations = {
             "id_post": self.job_post_id,
             "company_name": JobPageScraper.extract_company_name(self),
             "company_location": JobPageScraper.extract_company_location(self),
@@ -238,7 +249,10 @@ class JobPageScraper:
             "salary": JobPageScraper.extract_salary(self)
         }
 
-        return job_informations
+        return self.job_informations
 
     def __str__(self):
         return str(JobPageScraper.get_job_informations(self))
+
+    def __getitem__(self, item):
+        return self.job_informations[item]

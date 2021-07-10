@@ -1,7 +1,9 @@
 from scraper import JobPageScraper, ResultPageScraper
+from database_construction import *
 from random import randint
 from time import sleep
 import argparse
+import logging
 
 
 def get_user_informations():
@@ -55,19 +57,44 @@ def parse_user_informations(args_dict):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, filename='indeed.log',
+                        filemode='w',
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     args_dict = get_user_informations()
     results_page_links = parse_user_informations(args_dict)
 
     for link in results_page_links:
-        jobs_key = ResultPageScraper(link)
+        try:
+            jobs_key = ResultPageScraper(link)
+        except IndexError:
+            logging.error("Exception occurred",
+                          exc_info=True)
+
         sleep(randint(1, 10))
 
-        print(jobs_key.jobs_key_list)
-
         for job_key in jobs_key.jobs_key_list:
-            job = JobPageScraper(job_key)
-            print(job)
-            sleep(randint(1, 10))
+            try:
+                job = JobPageScraper(job_key)
+                sleep(randint(1, 10))
+
+                insert_post_informations(job["id_post"],
+                                         job["contract_type"],
+                                         job["job_posting_date"],
+                                         job["candidate_link"],
+                                         job["salary"],
+                                         job["company_name"],
+                                         job["company_rating_score"],
+                                         job["number_of_ratings"],
+                                         job["company_location"],
+                                         job["job_description"])
+
+                logging.info(job["id_post"] + " OK")
+
+            except Exception:
+                logging.error("Exception occurred with " + str(job_key),
+                              exc_info=True)
+                pass
 
 
 if __name__ == '__main__':
