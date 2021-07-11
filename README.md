@@ -28,7 +28,18 @@ run tables_creator.py to create associated tables.
 
 This should create a database as follow :
 
-[INSERT DB DIAGRAM]
+![Database Diagram](Database-Indeed.jpg)
+
+The database is composed of four tables: jobs, localisation, job_description and company. 
+
+The localisation table contains the city, country and state of the Indeed job offer we scrap.
+
+The company table contains the name of the company offering the job as well as the rating and number of ratings of the company. 
+
+The job description table contains the job description of the job offers scrapped. 
+
+Finally, the jobs table contains the Indeed id of the job offer as well as the contract type, job posting date, salary and candidate link (application link) of the job offered on Indeed.
+The jobs table also contains foreign keys to the three other tables. 
 
 ### How to use this script ?
 
