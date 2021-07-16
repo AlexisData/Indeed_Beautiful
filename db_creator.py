@@ -25,5 +25,4 @@ def create_database():
 
     print("...Indeed Database creation OK !")
 
-if __name__ == '__main__':
-    create_database()
+create_database()

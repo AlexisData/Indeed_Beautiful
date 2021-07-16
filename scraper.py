@@ -2,11 +2,11 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import datetime, timedelta
 import re
+#from config import FIRST_ELEMENT, NUMBER_OF_LINK, BASE_JOB_POST_URL
 
 FIRST_ELEMENT = 0
 BASE_JOB_POST_URL = "https://www.indeed.com/viewjob?jk="
 NUMBER_OF_LINK = 15
-
 
 class ResultPageScraper:
     """
@@ -36,6 +36,9 @@ class ResultPageScraper:
 
     def __next__(self):
         pass
+
+    def __str__(self):
+        return str(self.jobs_key_list)
 
 
 class JobPageScraper:
@@ -69,6 +72,8 @@ class JobPageScraper:
         if soup:
             job_title = soup.h1.text
             return job_title
+        else:
+            return None
 
     def extract_company_name(self):
         """
@@ -82,6 +87,8 @@ class JobPageScraper:
             company_name = soup.find(
                 class_="icl-u-lg-mr--sm icl-u-xs-mr--xs").text
             return company_name
+        else:
+            return None
 
     def extract_company_location(self):
         """
@@ -96,6 +103,8 @@ class JobPageScraper:
                 class_="jobsearch-InlineCompanyRating icl-u-xs-mt--xs "
                        "jobsearch-DesktopStickyContainer-companyrating").next_sibling.text
             return company_location
+        else:
+            return None
 
     def extract_contract_type(self):
         """
@@ -114,6 +123,10 @@ class JobPageScraper:
                     contract_type = (str(div.text)[
                                      8:])
                     return contract_type  # 8 to remove "Job Type" from beginning of the string
+                else:
+                    return None
+        else:
+            return None
 
     def extract_job_description(self):
         """
@@ -126,6 +139,8 @@ class JobPageScraper:
         if soup:
             job_description = soup.find(id="jobDescriptionText").text
             return job_description
+        else:
+            return None
 
     def extract_candidate_link(self):
         """
@@ -140,6 +155,10 @@ class JobPageScraper:
                 class_="icl-Button icl-Button--primary icl-Button--md icl-Button--block")
             if candidate_link:
                 return candidate_link["href"]
+            else:
+                return None
+        else:
+            return None
 
     def extract_salary(self):
         """
@@ -156,6 +175,10 @@ class JobPageScraper:
                 if str(div.text).startswith("Salary"):
                     return (str(div.text)[
                             6:])  # 6 to remove "Salary" from beginning of the string
+                else:
+                    return None
+        else:
+            return None
 
     def extract_company_rating_score(self):
         """
@@ -169,6 +192,10 @@ class JobPageScraper:
             company_rating_score = soup.find(itemprop="ratingValue")
             if company_rating_score:
                 return company_rating_score["content"]
+            else:
+                return None
+        else:
+            return None
 
     def extract_number_of_ratings(self):
         """
@@ -182,6 +209,10 @@ class JobPageScraper:
             number_of_ratings = soup.find(itemprop="ratingCount")
             if number_of_ratings:
                 return number_of_ratings.get("content")
+            else:
+                return None
+        else:
+            return None
 
     def get_number_of_days(self, string):
         """
@@ -226,6 +257,8 @@ class JobPageScraper:
             posting_date = JobPageScraper.posting_date_calculator(self,
                                                                   number_of_days).date()
             return posting_date
+        else:
+            return None
 
     def get_job_informations(self):
         """
@@ -256,3 +289,14 @@ class JobPageScraper:
 
     def __getitem__(self, item):
         return self.job_informations[item]
+
+"""
+test = ResultPageScraper("https://www.indeed.com/jobs?q&l=New%20York%20State&start=30&vjk=5ab0bb56fcb386fc")
+print(test)
+for job_key in test.jobs_key_list:
+    j = JobPageScraper(job_key)
+    print(j)
+"""
+
+t = JobPageScraper("00aa67f28a5b1bdd")
+print(t.get_job_informations())

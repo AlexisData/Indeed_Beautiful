@@ -23,12 +23,7 @@ def get_user_informations():
     parser.add_argument("number_of_pages", help="number of pages to scrape",
                         default=4, type=int, nargs="?")
 
-    try:
-        args = parser.parse_args()
-    except:
-        raise ValueError("Your input must be of the form: keyword(string) "
-                         "place(string) number_of_pages(integer) with spaces "
-                         "inside an argument replaced by + (Ex: New+York)")
+    args = parser.parse_args()
 
     args_dict = vars(args)
 
@@ -64,38 +59,33 @@ def main():
     args_dict = get_user_informations()
     results_page_links = parse_user_informations(args_dict)
 
+    print ("Starting Scrapping...")
+    print(results_page_links)
+
     for link in results_page_links:
-        try:
-            jobs_key = ResultPageScraper(link)
-        except IndexError:
-            logging.error("Exception occurred",
-                          exc_info=True)
+        jobs_key = ResultPageScraper(link)
 
         sleep(randint(1, 10))
 
+        print ("Go on link {}".format(link))
+
         for job_key in jobs_key.jobs_key_list:
-            try:
-                job = JobPageScraper(job_key)
-                sleep(randint(1, 10))
+            print("Go on job {}".format(job_key))
+            job = JobPageScraper(job_key)
+            sleep(randint(1, 10))
 
-                insert_post_informations(job["id_post"],
-                                         job["contract_type"],
-                                         job["job_posting_date"],
-                                         job["candidate_link"],
-                                         job["salary"],
-                                         job["company_name"],
-                                         job["company_rating_score"],
-                                         job["number_of_ratings"],
-                                         job["company_location"],
-                                         job["job_description"])
+            insert_post_informations(job["id_post"],
+                                     job["contract_type"],
+                                     job["job_posting_date"],
+                                     job["candidate_link"],
+                                     job["salary"],
+                                     job["company_name"],
+                                     job["company_rating_score"],
+                                     job["number_of_ratings"],
+                                     job["company_location"],
+                                     job["job_description"])
 
-                logging.info(job["id_post"] + " OK")
-
-            except Exception:
-                logging.error("Exception occurred with " + str(job_key),
-                              exc_info=True)
-                pass
-
+            print("Job post {} inserted".format(job_key))
 
 if __name__ == '__main__':
     main()
