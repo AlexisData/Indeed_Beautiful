@@ -2,11 +2,11 @@
 
 HOST = "localhost"
 USER = "root"
-PASSWD = "garyrouch"
+PASSWD = ""
 
 # Proxy Configuration
 
-PROXY = 'https://51.210.105.57:24000'
+PROXY = ''
 
 # Constant values
 
