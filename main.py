@@ -1,10 +1,7 @@
 from scraper import JobPageScraper, ResultPageScraper
 from database_construction import *
-from random import randint
-from time import sleep
 import argparse
-import logging
-
+from config import BASE_JOB_RESULTS_URL, KEYWORD_HELPER, PLACE_HELPER, NUMBER_PAGE_HELPER
 
 def get_user_informations():
     """
@@ -15,12 +12,11 @@ def get_user_informations():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('keyword', help='keyword of the job you are '
-                                        'looking for', type=str,
+    parser.add_argument('keyword', help=KEYWORD_HELPER, type=str,
                         default="Data+Science", nargs="?")
-    parser.add_argument('place', help='where do you want to work', type=str,
+    parser.add_argument('place', help=PLACE_HELPER, type=str,
                         default="United+States", nargs="?")
-    parser.add_argument("number_of_pages", help="number of pages to scrape",
+    parser.add_argument("number_of_pages", help=NUMBER_PAGE_HELPER,
                         default=4, type=int, nargs="?")
 
     args = parser.parse_args()
@@ -44,7 +40,7 @@ def parse_user_informations(args_dict):
     links = []
 
     for i in range(number_of_pages):
-        link = "https://www.indeed.com/jobs?q=" + keyword + "&l=" + place \
+        link = BASE_JOB_RESULTS_URL + keyword + "&l=" + place \
                + "&sort=date" + "&start=" + str(10 * int(i))
         links.append(link)
 
@@ -52,27 +48,17 @@ def parse_user_informations(args_dict):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, filename='indeed.log',
-                        filemode='w',
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
     args_dict = get_user_informations()
     results_page_links = parse_user_informations(args_dict)
 
     print ("Starting Scrapping...")
-    print(results_page_links)
 
     for link in results_page_links:
         jobs_key = ResultPageScraper(link)
 
-        sleep(randint(1, 10))
-
-        print ("Go on link {}".format(link))
-
         for job_key in jobs_key.jobs_key_list:
             print("Go on job {}".format(job_key))
             job = JobPageScraper(job_key)
-            sleep(randint(1, 10))
 
             insert_post_informations(job["id_post"],
                                      job["contract_type"],

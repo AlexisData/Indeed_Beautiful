@@ -1,9 +1,5 @@
 import mysql.connector as mysql
-import config
-
-HOST = config.HOST
-USER = config.USER
-PASSWD = config.PASSWD
+from config import HOST, USER, PASSWD
 
 db = mysql.connect(
     host=HOST,

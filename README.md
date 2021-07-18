@@ -43,6 +43,8 @@ The jobs table also contains foreign keys to the three other tables.
 
 ### How to use this script ?
 
+!!! Before to use this script, be sure to add your personal informations in config file
+
 The main.py script admits 3 arguments:
 - the searched keyword (for example: Python, Gardener, Librarian...), of type string: by default: Data+Science
 - the desired work location (for example: Washington, Dallas, Texas...), of type string: default: United+States
