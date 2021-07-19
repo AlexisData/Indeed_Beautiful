@@ -1,9 +1,5 @@
 import mysql.connector as mysql
-import config
-
-HOST = config.HOST
-USER = config.USER
-PASSWD = config.PASSWD
+from config import HOST, USER, PASSWD
 
 db = mysql.connect(
     host=HOST,
@@ -50,10 +46,10 @@ def create_jobs_table():
 
     print("Table jobs created")
 
-if __name__ == '__main__':
-    print("Creating Indeed Database Tables...")
-    create_companies_table()
-    create_localisation_table()
-    create_job_description_table()
-    create_jobs_table()
-    print("...Indeed Database Tables Created")
+
+print("Creating Indeed Database Tables...")
+create_companies_table()
+create_localisation_table()
+create_job_description_table()
+create_jobs_table()
+print("...Indeed Database Tables Created")

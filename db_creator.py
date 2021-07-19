@@ -20,10 +20,9 @@ def create_database():
         passwd = PASSWD)
 
     mycursor = db.cursor()
-    mycursor.execute("DROP DATABASE indeed")
+    #mycursor.execute("DROP DATABASE indeed")
     mycursor.execute("CREATE DATABASE indeed")
 
     print("...Indeed Database creation OK !")
 
-if __name__ == '__main__':
-    create_database()
+create_database()

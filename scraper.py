@@ -2,11 +2,9 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import datetime, timedelta
 import re
-
-FIRST_ELEMENT = 0
-BASE_JOB_POST_URL = "https://www.indeed.com/viewjob?jk="
-NUMBER_OF_LINK = 15
-
+from config import FIRST_ELEMENT, NUMBER_OF_LINK, BASE_JOB_POST_URL, \
+    PROXY, COMPANY_NAME_TAG, COMPANY_RATING_TAG, COMPANY_FOOTER, JOB_DESCRIPTION_SECTION, \
+    CANDIDATE_LINK_LOCATOR
 
 class ResultPageScraper:
     """
@@ -15,7 +13,8 @@ class ResultPageScraper:
 
     def __init__(self, link):
         self.link = link
-        self.source = requests.get(link)
+        proxies = {"https": PROXY, }
+        self.source = requests.get(link, proxies=proxies)
         self.jobs_key_list = self.extract_jobkeys()
 
     def extract_jobkeys(self):
@@ -37,6 +36,9 @@ class ResultPageScraper:
     def __next__(self):
         pass
 
+    def __str__(self):
+        return str(self.jobs_key_list)
+
 
 class JobPageScraper:
     """
@@ -45,6 +47,7 @@ class JobPageScraper:
 
     def __init__(self, job_post_id):
         self.job_post_id = job_post_id
+        self.job_informations = JobPageScraper.get_job_informations(self)
 
     def get_soup_job(self):
         """
@@ -54,7 +57,8 @@ class JobPageScraper:
         :return: soup (BS4 object)
         """
         job_post_url = BASE_JOB_POST_URL + str(self.job_post_id)
-        req = requests.get(job_post_url)
+        proxies = {"https": PROXY, }
+        req = requests.get(job_post_url, proxies=proxies)
         soup = BeautifulSoup(req.text, "html.parser")
         return soup
 
@@ -69,6 +73,8 @@ class JobPageScraper:
         if soup:
             job_title = soup.h1.text
             return job_title
+        else:
+            return None
 
     def extract_company_name(self):
         """
@@ -80,8 +86,10 @@ class JobPageScraper:
 
         if soup:
             company_name = soup.find(
-                class_="icl-u-lg-mr--sm icl-u-xs-mr--xs").text
+                class_=COMPANY_NAME_TAG).text
             return company_name
+        else:
+            return None
 
     def extract_company_location(self):
         """
@@ -93,9 +101,10 @@ class JobPageScraper:
 
         if soup:
             company_location = soup.find(
-                class_="jobsearch-InlineCompanyRating icl-u-xs-mt--xs "
-                       "jobsearch-DesktopStickyContainer-companyrating").next_sibling.text
+                class_=COMPANY_RATING_TAG).next_sibling.text
             return company_location
+        else:
+            return None
 
     def extract_contract_type(self):
         """
@@ -107,13 +116,17 @@ class JobPageScraper:
 
         if soup:
             contract_type = soup.find_all(
-                class_="jobsearch-JobDescriptionSection-sectionItem")
+                class_=JOB_DESCRIPTION_SECTION)
 
             for div in contract_type:
                 if str(div.text).startswith("Job Type"):
                     contract_type = (str(div.text)[
                                      8:])
                     return contract_type  # 8 to remove "Job Type" from beginning of the string
+                else:
+                    return None
+        else:
+            return None
 
     def extract_job_description(self):
         """
@@ -126,6 +139,8 @@ class JobPageScraper:
         if soup:
             job_description = soup.find(id="jobDescriptionText").text
             return job_description
+        else:
+            return None
 
     def extract_candidate_link(self):
         """
@@ -137,9 +152,13 @@ class JobPageScraper:
 
         if soup:
             candidate_link = soup.find(
-                class_="icl-Button icl-Button--primary icl-Button--md icl-Button--block")
+                class_=CANDIDATE_LINK_LOCATOR)
             if candidate_link:
                 return candidate_link["href"]
+            else:
+                return None
+        else:
+            return None
 
     def extract_salary(self):
         """
@@ -151,11 +170,15 @@ class JobPageScraper:
 
         if soup:
             salary = soup.find_all(
-                class_="jobsearch-JobDescriptionSection-sectionItem")
+                class_=JOB_DESCRIPTION_SECTION)
             for div in salary:
                 if str(div.text).startswith("Salary"):
                     return (str(div.text)[
                             6:])  # 6 to remove "Salary" from beginning of the string
+                else:
+                    return None
+        else:
+            return None
 
     def extract_company_rating_score(self):
         """
@@ -169,6 +192,10 @@ class JobPageScraper:
             company_rating_score = soup.find(itemprop="ratingValue")
             if company_rating_score:
                 return company_rating_score["content"]
+            else:
+                return None
+        else:
+            return None
 
     def extract_number_of_ratings(self):
         """
@@ -182,6 +209,10 @@ class JobPageScraper:
             number_of_ratings = soup.find(itemprop="ratingCount")
             if number_of_ratings:
                 return number_of_ratings.get("content")
+            else:
+                return None
+        else:
+            return None
 
     def get_number_of_days(self, string):
         """
@@ -220,12 +251,14 @@ class JobPageScraper:
         """
         soup = JobPageScraper.get_soup_job(self)
         if soup:
-            job_posting_date = soup.find(class_="jobsearch-JobMetadataFooter")
+            job_posting_date = soup.find(class_=COMPANY_FOOTER)
             number_of_days = JobPageScraper.get_number_of_days(self,
                                                                job_posting_date.text)
             posting_date = JobPageScraper.posting_date_calculator(self,
                                                                   number_of_days).date()
             return posting_date
+        else:
+            return None
 
     def get_job_informations(self):
         """
@@ -256,3 +289,11 @@ class JobPageScraper:
 
     def __getitem__(self, item):
         return self.job_informations[item]
+
+
+test = ResultPageScraper("https://www.indeed.com/jobs?q&l=New%20York%20State&start=30&vjk=5ab0bb56fcb386fc")
+print(test)
+
+for job_key in test.jobs_key_list:
+    j = JobPageScraper(job_key)
+    print(j)
