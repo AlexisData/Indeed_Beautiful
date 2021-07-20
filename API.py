@@ -48,15 +48,12 @@ def get_company_info(company_name, lat, long):
     rating = dic_company['candidates'][0]['rating']
     return({"address": address, "name" : name, "rating": rating, })
 
-def create_dic_company():
+def create_dic_company(company_name, localisation):
     """main function"""
-    company_name = 'liberty mutual insurance'
-    localisation = 'New York'
+    # company_name = 'liberty mutual insurance'
+    # localisation = 'New York'
     company_name_formatted = company_name_formatting(company_name)
     localisation_formatted = localisation_formatting(localisation)
     lat = get_coordinates(localisation_formatted)[0]
     long = get_coordinates(localisation_formatted)[1]
-    print(get_company_info(company_name_formatted, lat, long))
-
-
-create_dic_company()
+    return get_company_info(company_name_formatted, lat, long)
