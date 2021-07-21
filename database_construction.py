@@ -129,18 +129,3 @@ def insert_post_informations(job_indeed_id, contract_type, job_posting_date,
                                 localisation_id, job_description_id)
 
 
-def insert_values_from_API(name, localisation):
-    create_dic_company(name, localisation)
-    mycursor = db.cursor()
-    mycursor.execute(
-        "INSERT INTO companies (google_rating_score) values (%s)",
-        (create_dic_company['rating'],))
-    mycursor.execute(
-        "INSERT INTO localisation (localisation_address) values (%s)",
-        (create_dic_company['address'],))
-    db.commit()
-    print("Insert google_rating_score OK")
-    return mycursor.lastrowid
-
-
-

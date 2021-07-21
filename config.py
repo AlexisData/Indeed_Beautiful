@@ -2,7 +2,7 @@
 
 HOST = "localhost"
 USER = "root"
-PASSWD = ""
+PASSWD = "garyrouch"
 
 # Proxy Configuration
 
@@ -28,3 +28,9 @@ COMPANY_RATING_TAG = "jobsearch-InlineCompanyRating icl-u-xs-mt--xs jobsearch-De
 COMPANY_FOOTER = "jobsearch-JobMetadataFooter"
 JOB_DESCRIPTION_SECTION = "jobsearch-JobDescriptionSection-sectionItem"
 CANDIDATE_LINK_LOCATOR = "icl-Button icl-Button--primary icl-Button--md icl-Button--block"
+
+# Google API informations
+
+GOOGLE_API_ADRESS = "https://maps.googleapis.com/maps/api/geocode/json?address="
+GOOGLE_API_COMPANY = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
+GOOGLE_API_KEY = ""

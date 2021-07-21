@@ -14,16 +14,15 @@ def create_companies_table():
                      '(company_id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
                      'name VARCHAR(100), '
                      'rating_score FLOAT(2,1), '
-                     'google_rating_score FLOAT(2,1), '
-                     'rating_count INT(7));')
+                     'rating_count INT(7), '
+                     'google_rating_score FLOAT(2,1));')
 
     print("Table companies created")
 
 def create_localisation_table():
     mycursor.execute('CREATE TABLE localisation '
                      '(localisation_id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                     'localisation_address VARCHAR(1000)'
-                     'localisation VARCHAR(50));')
+                     'localisation VARCHAR(50), longitude FLOAT(10,7), latitude FLOAT(10,7));')
 
     print("Table localisation created")
 

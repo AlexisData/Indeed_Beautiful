@@ -20,7 +20,7 @@ def create_database():
         passwd = PASSWD)
 
     mycursor = db.cursor()
-    #mycursor.execute("DROP DATABASE indeed")
+    mycursor.execute("DROP DATABASE indeed")
     mycursor.execute("CREATE DATABASE indeed")
 
     print("...Indeed Database creation OK !")
