@@ -290,10 +290,11 @@ class JobPageScraper:
     def __getitem__(self, item):
         return self.job_informations[item]
 
-
+"""
 test = ResultPageScraper("https://www.indeed.com/jobs?q&l=New%20York%20State&start=30&vjk=5ab0bb56fcb386fc")
 print(test)
 
 for job_key in test.jobs_key_list:
     j = JobPageScraper(job_key)
     print(j)
+"""

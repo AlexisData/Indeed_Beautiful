@@ -1,5 +1,8 @@
 import requests
 import ast
+from config import HOST, USER, PASSWD
+import mysql.connector as mysql
+
 
 def company_name_formatting(company_name):
     """
@@ -60,3 +63,21 @@ def create_dic_company():
 
 
 create_dic_company()
+
+def insert_coord(lat, lon, id):
+    """
+    Update location db by id with latitude and longitude value
+    """
+    db = mysql.connect(
+        host=HOST,
+        user=USER,
+        passwd=PASSWD,
+        auth_plugin='mysql_native_password',
+        database="indeed")
+
+    my_cursor = db.cursor()
+    my_cursor.execute("UPDATE localisation SET lat =" + lat +
+                      ", lon = " + lon + "WHERE id = " + id)
+
+    db.commit()
+    print("Insert Localisation OK")

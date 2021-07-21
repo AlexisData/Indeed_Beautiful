@@ -61,6 +61,36 @@ def insert_job_description(job_description):
     print("Insert Job description OK")
     return mycursor.lastrowid
 
+def query_job_id(job_indeed_id):
+    """
+    This function query job_id from db
+    """
+    mycursor = db.cursor()
+    mycursor.execute(
+        "SELECT job_id FROM jobs WHERE job_indeed_id = '" + job_indeed_id + "'")
+    record = mycursor.fetchone()
+    return record
+
+def query_company_name(name):
+    """
+    This function query company name from db
+    """
+    mycursor = db.cursor()
+    mycursor.execute(
+        "SELECT company_id FROM companies WHERE name = '" + name + "'")
+    record = mycursor.fetchone()
+    return record
+
+def query_company_localisation(localisation):
+    """
+    This function query localisation from company localisation
+    """
+    mycursor = db.cursor()
+    mycursor.execute(
+        "SELECT localisation_id FROM localisation WHERE localisation = '" + localisation + "'")
+    record = mycursor.fetchone()
+    return record
+
 
 def insert_post_informations(job_indeed_id, contract_type, job_posting_date,
                              candidate_link, salary, name, rating_score,
@@ -69,20 +99,14 @@ def insert_post_informations(job_indeed_id, contract_type, job_posting_date,
     This function insert provided data in database
     """
 
-    mycursor = db.cursor()
-
-    mycursor.execute(
-        "SELECT job_id FROM jobs WHERE job_indeed_id = '" + job_indeed_id + "'")
-    record = mycursor.fetchone()
+    record = query_job_id(job_indeed_id)
 
     if record:
         print(
             "The job_indeed_id number : " + job_indeed_id + " already exists in the table")
 
     else:
-        mycursor.execute(
-            "SELECT company_id FROM companies WHERE name = '" + name + "'")
-        record = mycursor.fetchone()
+        record = query_company_name(name)
 
         if record:
             company_id = record[0]
@@ -90,9 +114,7 @@ def insert_post_informations(job_indeed_id, contract_type, job_posting_date,
             company_id = insert_company_informations(name, rating_score,
                                                      rating_count)
 
-        mycursor.execute(
-            "SELECT localisation_id FROM localisation WHERE localisation = '" + localisation + "'")
-        record = mycursor.fetchone()
+        record = query_company_localisation(localisation)
 
         if record:
             localisation_id = record[0]
