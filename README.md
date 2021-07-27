@@ -41,9 +41,9 @@ The job description table contains the job description of the job offers scrappe
 Finally, the jobs table contains the Indeed id of the job offer as well as the contract type, job posting date, salary and candidate link (application link) of the job offered on Indeed.
 The jobs table also contains foreign keys to the three other tables. 
 
-### How to use this script ?
+### How to use this script ? ---CLI---
 
-!!! Before to use this script, be sure to add your personal informations in config file
+!!! Before to use this script, be sure to add your personal informations in config file !!!
 
 The main.py script admits 3 arguments:
 - the searched keyword (for example: Python, Gardener, Librarian...), of type string: by default: Data+Science
@@ -65,9 +65,17 @@ salary.
 
 All this information is stored in the indeed database created.
 
+### API completion
+
+The script is also interfaced with the Google API, which allows additional information to be retrieved:
+- the Google rating of the companies (which can be compared with Indeed's rating)
+- the geolocation of the addresses (which can be used for geographical cross-checking and map visualisations)
+(It is important to enter an API key in the config file)
+
 ## Tech Stack
 
 Full Python !
+Python 3.8
 MySql Database
   
 ## Roadmap
