@@ -1,8 +1,6 @@
-import requests
-import ast
 import mysql.connector as mysql
-from config import HOST, USER, PASSWD, GOOGLE_API_ADRESS, GOOGLE_API_KEY, \
-    GOOGLE_API_COMPANY
+from config import HOST, USER, PASSWD
+from API_requests import get_coordinates, get_company_rating, localisation_formatting
 
 db = mysql.connect(
     host=HOST,
@@ -10,63 +8,6 @@ db = mysql.connect(
     passwd=PASSWD,
     auth_plugin='mysql_native_password',
     database="indeed")
-
-
-def company_name_formatting(company_name):
-    """
-    This function takes a company name and format it to be used with google API.
-    param: company name
-    return: formatted company name
-    """
-    company_name = company_name.replace(' ', '%20')
-    return company_name
-
-
-def localisation_formatting(localisation):
-    """
-     This function takes a localisation and format it to be used with google API.
-     param: company localisation
-     return: formatted company localisation
-     """
-    localisation = localisation.replace(' ', '+')
-    return localisation
-
-
-def get_coordinates(localisation_formatted):
-    """
-     This function takes the formatted localisation and use google API to return the coordinates of the city.
-     param: formatted city name
-     return: coordinates of the city, tuple
-     """
-    r1 = requests.get(
-        GOOGLE_API_ADRESS + localisation_formatted + "&key=" + GOOGLE_API_KEY)
-    r1 = r1.content.decode("UTF-8")
-    dic_coordinates = ast.literal_eval(r1)
-    lat = dic_coordinates['results'][0]['geometry']['bounds']['northeast'][
-        'lat']
-    long = dic_coordinates['results'][0]['geometry']['bounds']['northeast'][
-        'lng']
-    lat = round(lat, 7)
-    long = round(long, 7)
-    return (lat, long)
-
-
-def get_company_rating(company_name):
-    """
-     This function returns company rating from Google
-
-     param: company name
-     return: google rating of the company.
-     """
-    r2 = requests.get(
-        GOOGLE_API_COMPANY + company_name + "&inputtype=textquery&fields=formatted_address,name,rating&key=" + GOOGLE_API_KEY)
-    dic_company = r2.content
-    dic_company = dic_company.decode("UTF-8")
-    dic_company = ast.literal_eval(dic_company)
-
-    rating = dic_company['candidates'][0]['rating']
-    return rating
-
 
 def query_empty_coordinates():
     """
@@ -87,7 +28,7 @@ def insert_coordinates(coordinates, localisation_id):
     mycursor.execute(
         "UPDATE localisation SET latitude = " + str(coordinates[1]) +
         ", longitude = " + str(coordinates[0]) +
-        "WHERE localisation_id = " + str(localisation_id))
+        " WHERE localisation_id = " + str(localisation_id))
     db.commit()
     print("{} inserted".format(coordinates))
 
@@ -99,7 +40,8 @@ def get_and_insert_coordinates():
     record = query_empty_coordinates()
     for r in record:
         coordinates = (get_coordinates(localisation_formatting(r[0])))
-        if coordinates:
+        print(coordinates)
+        if coordinates[0] is not None and coordinates[1] is not None:
             insert_coordinates(coordinates, r[1])
         else:
             pass
@@ -135,7 +77,8 @@ def get_and_insert_google_rating_score():
     record = query_empty_google_rating()
     for r in record:
         google_rating = get_company_rating(r[0])
-        if google_rating:
+        print(google_rating)
+        if google_rating is not None:
             insert_google_rating_score(google_rating, r[1])
         else:
             pass

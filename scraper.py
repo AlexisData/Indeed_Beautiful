@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import re
 from config import FIRST_ELEMENT, NUMBER_OF_LINK, BASE_JOB_POST_URL, \
     PROXY, COMPANY_NAME_TAG, COMPANY_RATING_TAG, COMPANY_FOOTER, JOB_DESCRIPTION_SECTION, \
-    CANDIDATE_LINK_LOCATOR
+    CANDIDATE_LINK_LOCATOR, FIRST_COMPANY, LAST_COMPANY
 
 class ResultPageScraper:
     """
@@ -27,7 +27,7 @@ class ResultPageScraper:
         solution = re.findall("jobKeysWithInfo.*?true;", self.source.text)
         self.jobs_key_list = []
         for i in range(NUMBER_OF_LINK):
-            self.jobs_key_list.append(solution[i][17:-10])
+            self.jobs_key_list.append(solution[i][FIRST_COMPANY:LAST_COMPANY])
         return self.jobs_key_list
 
     def __iter__(self):
@@ -289,12 +289,3 @@ class JobPageScraper:
 
     def __getitem__(self, item):
         return self.job_informations[item]
-
-"""
-test = ResultPageScraper("https://www.indeed.com/jobs?q&l=New%20York%20State&start=30&vjk=5ab0bb56fcb386fc")
-print(test)
-
-for job_key in test.jobs_key_list:
-    j = JobPageScraper(job_key)
-    print(j)
-"""

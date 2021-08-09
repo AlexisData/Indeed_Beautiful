@@ -1,6 +1,5 @@
 import mysql.connector as mysql
 from config import HOST, USER, PASSWD
-from API import *
 
 db = mysql.connect(
     host=HOST,

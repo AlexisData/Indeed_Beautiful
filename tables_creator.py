@@ -1,5 +1,8 @@
 import mysql.connector as mysql
-from config import HOST, USER, PASSWD
+from config import HOST, USER, PASSWD, COMPANIES_TABLE_CREATION, \
+    COMPANIES_TABLE_CONFIRMATION, LOCATION_TABLE_CREATION, LOCATION_TABLE_CONFIRMATION, \
+    JOBS_DESCRIPTION_TABLE_CREATION, JOBS_DESCRIPTION_TABLE_CONFIRMATION, \
+    JOBS_TABLE_CREATION, JOBS_TABLE_CONFIRMATION
 
 db = mysql.connect(
     host=HOST,
@@ -10,42 +13,24 @@ db = mysql.connect(
 mycursor = db.cursor()
 
 def create_companies_table():
-    mycursor.execute('CREATE TABLE companies '
-                     '(company_id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                     'name VARCHAR(100), '
-                     'rating_score FLOAT(2,1), '
-                     'rating_count INT(7), '
-                     'google_rating_score FLOAT(2,1));')
+    mycursor.execute(COMPANIES_TABLE_CREATION)
 
-    print("Table companies created")
+    print(COMPANIES_TABLE_CONFIRMATION)
 
 def create_localisation_table():
-    mycursor.execute('CREATE TABLE localisation '
-                     '(localisation_id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                     'localisation VARCHAR(50), longitude FLOAT(10,7), latitude FLOAT(10,7));')
+    mycursor.execute(LOCATION_TABLE_CREATION)
 
-    print("Table localisation created")
+    print(LOCATION_TABLE_CONFIRMATION)
 
 def create_job_description_table():
-    mycursor.execute('CREATE TABLE jobs_description '
-                     '(job_description_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                     'job_description VARCHAR(10000));')
+    mycursor.execute(JOBS_DESCRIPTION_TABLE_CREATION)
 
-    print("Table jobs description created")
+    print(JOBS_DESCRIPTION_TABLE_CONFIRMATION)
 
 def create_jobs_table():
-    mycursor.execute('CREATE TABLE jobs '
-                     '(job_id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                     'job_indeed_id VARCHAR(16), '
-                     'contract_type VARCHAR(25), '
-                     'job_posting_date DATETIME, '
-                     'candidate_link VARCHAR(1000),'
-                     'salary VARCHAR(25),'
-                     'localisation_id INT(6), FOREIGN KEY (localisation_id) REFERENCES localisation(localisation_id),'
-                     'company_id INT(6), FOREIGN KEY (company_id) REFERENCES companies(company_id),'
-                     'job_description_id INT(6), FOREIGN KEY (job_description_id) REFERENCES jobs_description(job_description_id));')
+    mycursor.execute(JOBS_TABLE_CREATION)
 
-    print("Table jobs created")
+    print(JOBS_TABLE_CONFIRMATION)
 
 
 print("Creating Indeed Database Tables...")
