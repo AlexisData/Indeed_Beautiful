@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import datetime, timedelta
 import re
-from config import FIRST_ELEMENT, NUMBER_OF_LINK, BASE_JOB_POST_URL, \
+from config import NUMBER_OF_LINK, BASE_JOB_POST_URL, \
     PROXY, COMPANY_NAME_TAG, COMPANY_RATING_TAG, COMPANY_FOOTER, JOB_DESCRIPTION_SECTION, \
     CANDIDATE_LINK_LOCATOR, FIRST_COMPANY, LAST_COMPANY
 

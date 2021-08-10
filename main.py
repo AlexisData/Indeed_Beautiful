@@ -1,7 +1,9 @@
 from scraper import JobPageScraper, ResultPageScraper
 from database_construction import *
 import argparse
-from config import BASE_JOB_RESULTS_URL, KEYWORD_HELPER, PLACE_HELPER, NUMBER_PAGE_HELPER
+from config import BASE_JOB_RESULTS_URL, KEYWORD_HELPER, PLACE_HELPER, \
+    NUMBER_PAGE_HELPER
+from API_db_management import get_and_insert_google_rating_score, get_and_insert_coordinates
 
 def get_user_informations():
     """
@@ -13,11 +15,11 @@ def get_user_informations():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('keyword', help=KEYWORD_HELPER, type=str,
-                        default="Data+Science", nargs="?")
+                        default="Python", nargs="?")
     parser.add_argument('place', help=PLACE_HELPER, type=str,
-                        default="United+States", nargs="?")
+                        default="Boston", nargs="?")
     parser.add_argument("number_of_pages", help=NUMBER_PAGE_HELPER,
-                        default=4, type=int, nargs="?")
+                        default=15, type=int, nargs="?")
 
     args = parser.parse_args()
 
@@ -72,6 +74,10 @@ def main():
                                      job["job_description"])
 
             print("Job post {} inserted".format(job_key))
+
+    print("Scrapping over... updating database...")
+    get_and_insert_coordinates()
+    get_and_insert_google_rating_score()
 
 if __name__ == '__main__':
     main()
